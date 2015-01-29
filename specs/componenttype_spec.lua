@@ -1,10 +1,6 @@
 local Vulcano = require('vulcano')
 local ComponentType = Vulcano.ComponentType
 
-function printx(x)
-  print("0x"..bit.tohex(x, 16) .. " = " .. x)
-end
-
 describe("ComponentType", function()
   randomize()
 
