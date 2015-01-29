@@ -23,7 +23,7 @@ function Entity:get(...)
     table.insert(components, self.components[class.name])
   end
   iterateWithCheck(Class.Object.isSubclassOf, " is not a Component subclass!", callback, ...)
-  return table.unpack(components)
+  return unpack(components)
 end
 
 function Entity:remove(...)
