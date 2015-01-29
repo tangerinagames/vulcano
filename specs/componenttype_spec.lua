@@ -16,7 +16,7 @@ describe("ComponentType", function()
     assert.are_not.equals(ComponentType().id, ComponentType().id)
   end)
 
-   it("should generate a bitmask for each instance", function()
+  it("should generate a bitmask for each instance", function()
     assert.are_not.equals(ComponentType().mask, ComponentType().mask)
   end)
 

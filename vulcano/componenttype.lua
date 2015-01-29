@@ -1,7 +1,7 @@
 local PACKAGE = (...):match("^(.+)%.[^%.]+")
-local class = require(PACKAGE .. ".class")
+local Class = require(PACKAGE .. ".class")
 
-local ComponentType = class("ComponentType")
+local ComponentType = Class("ComponentType")
 
 ComponentType.static.NEXT_ID = 1
 ComponentType.static.NEXT_MASK = 1

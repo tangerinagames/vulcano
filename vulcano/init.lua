@@ -1,7 +1,7 @@
 bit = require("bit")
 
 local PACKAGE = ...
-local components = {'Class', 'Component', 'ComponentType'}
+local components = { 'Class', 'Component', 'ComponentType', 'Entity' }
 local Vulcano = {}
 
 for i, component in pairs(components) do
