@@ -2,8 +2,7 @@ local Vulcano = require('vulcano')
 local ComponentType = Vulcano.ComponentType
 
 describe("ComponentType", function()
-  randomize()
-
+  
   it("should exists", function()
     assert.truthy(ComponentType)
   end)
