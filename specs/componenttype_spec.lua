@@ -4,7 +4,7 @@ local ComponentType = Vulcano.ComponentType
 describe("ComponentType", function()
   
   it("should exists", function()
-    assert.truthy(ComponentType)
+    assert.is.truthy(ComponentType)
   end)
 
   it("should be a subclass of Object", function()

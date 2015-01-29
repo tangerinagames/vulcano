@@ -3,14 +3,18 @@ local Class = require(PACKAGE .. ".class")
 local ComponentType = require(PACKAGE .. ".componenttype")
 
 local Component = Class("Component")
-
-Component.static.types = {}
+local types = {}
 
 function Component:type()
-  if not Component.types[self.class.name] then
-    Component.types[self.class.name] = ComponentType()
+  return Component.typeOf(self.class)
+end
+
+function Component.static.typeOf(class)
+  if not Class.Object.isSubclassOf(class, Component) then
+    error(tostring(item) .. " is not a Component subclass!")
   end
-  return Component.types[self.class.name]
+  types[class] = types[class] or ComponentType()
+  return types[class]
 end
 
 return Component

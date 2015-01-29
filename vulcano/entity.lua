@@ -28,7 +28,7 @@ end
 
 function Entity:remove(...)
   local callback = function(class)
-    self.mask = self.mask - Component.types[class.name].mask
+    self.mask = self.mask - Component.typeOf(class).mask
     self.components[class.name] = nil
   end
   iterateWithCheck(Class.Object.isSubclassOf, " is not a Component subclass!", callback, ...)
