@@ -1,12 +1,19 @@
 local Vulcano = require('vulcano')
 local Class = Vulcano.Class
 local Entity = Vulcano.Entity
+local Engine = Vulcano.Engine
 local Component = Vulcano.Component
 
 describe("Entity", function()
 
   local Position = Class("Position", Component)
   local Size = Class("Size", Component)
+  local entity = nil
+
+  before_each(function()
+    entity = Entity()
+    entity.engine = Engine()
+  end)
 
   it("should exists", function()
     assert.is.truthy(Entity)
@@ -19,20 +26,33 @@ describe("Entity", function()
   describe(":add()", function()
 
     it("should add components", function()
-      local entity = Entity()
       entity:add(Position())
       assert.is.truthy(entity:get(Position))
     end)
 
     it("should add multiple components", function()
-      local entity = Entity()
       entity:add(Position(), Size())
       assert.is.truthy(entity:get(Position))
       assert.is.truthy(entity:get(Size))
     end)
 
     it("should change the entity bitmask", function()
-      local entity = Entity()
+      assert.are.equals(0, entity.mask)
+
+      entity:add(Position())
+      assert.are.equals(Position():type().mask, entity.mask)
+
+      entity:add(Size())
+      assert.are.equals(Position():type().mask + Size():type().mask, entity.mask)
+    end)
+
+    it("should notify the engine about the new bitmask", function()
+      spy.on(entity.engine, "registerOnSystems")
+      entity:add(Position())
+      assert.spy(entity.engine.registerOnSystems).was.called()
+    end)
+
+    it("should change the entity bitmask", function()
       assert.are.equals(0, entity.mask)
 
       entity:add(Position())
@@ -44,7 +64,6 @@ describe("Entity", function()
 
     it("should only accepts Component instances", function()
       local call = function()
-        local entity = Entity()
         entity:add("foobar")
       end
       assert.has_error(call, "foobar is not a Component instance!")
@@ -55,7 +74,6 @@ describe("Entity", function()
   describe(":get()", function()
 
     it("should return a component", function()
-      local entity = Entity()
       entity:add(Position())
 
       local position = entity:get(Position)
@@ -63,7 +81,6 @@ describe("Entity", function()
     end)
 
     it("should return multiple components", function()
-      local entity = Entity()
       entity:add(Size())
       entity:add(Position())
       
@@ -74,7 +91,6 @@ describe("Entity", function()
 
      it("should only accepts Component subclasses", function()
       local call = function()
-        local entity = Entity()
         entity:get("footype")
       end
       assert.has_error(call, "footype is not a Component subclass!")
@@ -85,7 +101,6 @@ describe("Entity", function()
   describe(":remove()", function()
 
     it("should remove a component", function()
-      local entity = Entity()
       entity:add(Position())
 
       entity:remove(Position)
@@ -93,7 +108,6 @@ describe("Entity", function()
     end)
 
     it("should remove multiple components", function()
-      local entity = Entity()
       entity:add(Size())
       entity:add(Position())
       
@@ -101,8 +115,14 @@ describe("Entity", function()
       assert.is.falsy(entity:get(Position, Size))
     end)
 
+    it("should notify the engine about the new bitmask", function()
+      entity:add(Position())
+      spy.on(entity.engine, "registerOnSystems")
+      entity:remove(Position)
+      assert.spy(entity.engine.registerOnSystems).was.called()
+    end)
+
     it("should change the entity bitmask", function()
-      local entity = Entity()
       entity:add(Position())
       assert.are.equals(Position():type().mask, entity.mask)
 
@@ -112,7 +132,6 @@ describe("Entity", function()
 
     it("should only accepts Component subclasses", function()
       local call = function()
-        local entity = Entity()
         entity:remove("footype")
       end
       assert.has_error(call, "footype is not a Component subclass!")

@@ -2,6 +2,21 @@ local PACKAGE = (...):match("^(.+)%.[^%.]+")
 local Class = require(PACKAGE .. ".class")
 local Component = require(PACKAGE .. ".component")
 
+-- internal functions
+
+local iterateWithCheck = function(check, message, callback, ...)
+  local list = table.pack(...)
+  for i = 1, list.n do
+    local item = list[i]
+    if not check(item, Component) then
+      error(tostring(item) .. message)
+    end
+    callback(item)
+  end
+end
+
+-- class definition
+
 local Entity = Class("Entity")
 
 function Entity:initialize()
@@ -12,9 +27,10 @@ end
 function Entity:add(...)
   local callback = function(component)
     self.mask = self.mask + component:type().mask
-    self.components[component.class.name] = component
+    self.components[component.class.name] = component    
   end
   iterateWithCheck(Class.Object.isInstanceOf, " is not a Component instance!", callback, ...)
+  self:registerOnSystems()
 end
 
 function Entity:get(...)
@@ -32,16 +48,12 @@ function Entity:remove(...)
     self.components[class.name] = nil
   end
   iterateWithCheck(Class.Object.isSubclassOf, " is not a Component subclass!", callback, ...)
+  self:registerOnSystems()
 end
 
-function iterateWithCheck(check, message, callback, ...)
-  local list = table.pack(...)
-  for i = 1, list.n do
-    local item = list[i]
-    if not check(item, Component) then
-      error(tostring(item) .. message)
-    end
-    callback(item)
+function Entity:registerOnSystems()
+  if self.engine then
+    self.engine:registerOnSystems(self)
   end
 end
 
